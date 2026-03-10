@@ -105,25 +105,165 @@ Additionally, [**here**](https://wiki.ai03.com/books/pcb-design/page/pcb-guide-p
 
 ## Examples
 
-<details><summary>Simple Keys + MCU</summary>
+<details><summary>Simple Keys with Diodes</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+A minimal PCB with Cherry MX switches and diodes placed at every key position. Net assignments use templating to read from key-level attributes defined in the points section.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        outer:
+          key.column_net: C0
+        pinky:
+          key.column_net: C1
+        ring:
+          key.column_net: C2
+        middle:
+          key.column_net: C3
+        index:
+          key.column_net: C4
+      rows:
+        bottom:
+          row_net: R0
+        home:
+          row_net: R1
+        top:
+          row_net: R2
+outlines:
+  board:
+    - what: rectangle
+      where: true
+      size: [u-1, u-1]
+      bound: true
+      fillet: 2
+pcbs:
+  main:
+    outlines:
+      edge:
+        outline: board
+    footprints:
+      switches:
+        what: mx
+        where: true
+        params:
+          from: "{{column_net}}"
+          to: "{{row_net}}"
+      diodes:
+        what: diode
+        where: true
+        adjust:
+          shift: [0, -5]
+        params:
+          from: "{{row_net}}"
+          to: "{{column_net}}"
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
+</p>
+</details>
 
-<!-- ![name](./assets/file.png) -->
+<details><summary>Keys + MCU</summary>
+<p>
 
-</div>
-</TabItem>
-</Tabs>
+A more complete PCB that adds a Pro Micro microcontroller to the matrix. The MCU is placed using a separate zone and its pins are connected to the matrix column and row nets.
+
+```yaml
+points:
+  zones:
+    matrix:
+      columns:
+        outer:
+          key.column_net: C0
+        index:
+          key.column_net: C1
+      rows:
+        bottom:
+          row_net: R0
+        top:
+          row_net: R1
+    mcu:
+      anchor:
+        ref: matrix_index_top
+        shift: [u, 0]
+      columns.mcu:
+      rows.mcu:
+outlines:
+  board:
+    - what: rectangle
+      where: /matrix_.*/
+      size: [u-1, u-1]
+      bound: true
+      fillet: 2
+pcbs:
+  main:
+    outlines:
+      edge:
+        outline: board
+    footprints:
+      switches:
+        what: mx
+        where: /matrix_.*/
+        params:
+          from: "{{column_net}}"
+          to: "{{row_net}}"
+      diodes:
+        what: diode
+        where: /matrix_.*/
+        adjust:
+          shift: [0, -5]
+        params:
+          from: "{{row_net}}"
+          to: "{{column_net}}"
+      mcu:
+        what: promicro
+        where:
+          ref: mcu_mcu_mcu
+        params:
+          P0: C0
+          P1: C1
+          P14: R0
+          P16: R1
+```
+
+</p>
+</details>
+
+<details><summary>KiCAD 8 Template</summary>
+<p>
+
+By default, Ergogen uses the `kicad5` PCB template. To generate PCBs for KiCAD 8, set the `template` key to `kicad8`.
+
+```yaml
+points:
+  zones:
+    matrix:
+      columns:
+        left:
+        right:
+      rows:
+        only:
+outlines:
+  board:
+    - what: rectangle
+      where: true
+      size: [25, 50]
+      fillet: 0.5
+pcbs:
+  main:
+    template: kicad8
+    outlines:
+      edge:
+        outline: board
+    footprints:
+      switches:
+        what: mx
+        where: true
+        params:
+          from: from
+          to: to
+```
 
 </p>
 </details>

@@ -6,8 +6,6 @@ sidebar_position: 7
 
 ## Overview
 
-TODO -> outline to case illustration
-
 Cases add a pretty basic and minimal 3D aspect to the generation process.
 In this phase, we take different outlines (defined in the previous section, even the "private" ones), extrude and position them in space, and combine them into one 3D-printable object.
 That's it.
@@ -52,45 +50,120 @@ Stacking is omitted as it makes no sense here.
 <details><summary>Simple Extrusion</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+Takes a previously defined outline and extrudes it into a 3D object. This is the most basic case operation.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+        ring:
+        middle:
+        index:
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  board:
+    - what: rectangle
+      where: true
+      size: [u-1, u-1]
+      bound: true
+      fillet: 2
+cases:
+  bottom:
+    - name: board
+      extrude: 1
 ```
-
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
 
 </p>
 </details>
 
-<details><summary>Unibody Case</summary>
+<details><summary>Case with Boolean Operations</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+Cases support boolean operations (add, subtract, intersect) as well as 3D transformations (shift, rotate). Here we create a plate with switch cutouts by subtracting smaller rectangles from the main board outline.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+        ring:
+        middle:
+        index:
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  board:
+    - what: rectangle
+      where: true
+      size: [u-1, u-1]
+      bound: true
+      fillet: 2
+  _switch_cutouts:
+    - what: rectangle
+      where: true
+      size: [14, 14]
+cases:
+  plate:
+    - name: board
+      extrude: 1.5
+    - name: _switch_cutouts
+      extrude: 1.5
+      operation: subtract
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
+</p>
+</details>
 
-<!-- ![name](./assets/file.png) -->
+<details><summary>Combining Cases</summary>
+<p>
 
-</div>
-</TabItem>
-</Tabs>
+Previously defined cases can be referenced and combined. The `[+, -, ~]` shorthand operators work the same as for outlines: `+` for union, `-` for subtraction, and `~` for intersection. You can also use 3D shift and rotation to position parts in space.
+
+```yaml
+points:
+  zones:
+    matrix:
+outlines:
+  _square:
+    - what: rectangle
+      where: true
+      size: [8, 8]
+  _circle:
+    - what: circle
+      where: true
+      radius: 3
+cases:
+  _cube:
+    - name: _square
+      extrude: 8
+  _cylinder:
+    - name: _circle
+      extrude: 8
+  _hollowed_cube:
+    target:
+      name: _cube
+      what: case
+    tool:
+      name: _cylinder
+      what: case
+      operation: subtract
+  _rotated_cylinder:
+    - name: _circle
+      extrude: 8
+      shift: [0, 4, 4]
+      rotate: [90, 0, 0]
+  combination:
+    - "_hollowed_cube"
+    - "~_rotated_cylinder"
+```
 
 </p>
 </details>

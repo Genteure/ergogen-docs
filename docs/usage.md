@@ -6,7 +6,15 @@ sidebar_position: 10
 
 ## Web
 
-TODO
+The easiest way to get started with Ergogen is through one of the web-based deployments &ndash; no installation required.
+
+- **[Official Web UI](https://ergogen.xyz)**: The original web interface hosted by the Ergogen project.
+- **[Unofficial Web UI](https://ergogen.ceoloide.com/)**: A community-maintained alternative with additional features, and soon to be the official one.
+
+Both interfaces let you edit your YAML config in a text editor on the left and see the generated outputs (points, outlines, PCBs) update in real time on the right.
+Simply paste or type your config, and the preview will reflect your changes as you make them.
+
+The web UI is great for learning and experimentation. For production use or when you need custom footprints via [bundles](./formats.md#bundles), consider using the CLI.
 
 ## CLI
 
