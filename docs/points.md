@@ -804,25 +804,45 @@ We create the new column anchor by `spread`ing/`stagger`ing/`splay`ing the old o
 
 Once we have an existing zone (`matrix`), we can anchor further zones to it &ndash; like, say, a thumbfan.
 
-<Tabs>
-<TabItem value="config" label="Config" default>
-
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+          key.stagger: -0.25 u
+        ring:
+          key.stagger: 0.25 u
+        middle:
+          key.stagger: 0.35 u
+        index:
+          key.stagger: -0.15 u
+      rows:
+        bottom:
+        home:
+        top:
+    thumbfan:
+      anchor:
+        ref: matrix_index_bottom
+        shift: [-0.5 u, -1 u]
+      columns:
+        near:
+          key.splay: -15
+        home:
+          key:
+            spread: u
+            splay: -15
+            origin: [-0.5 u, -0.5 u]
+        far:
+          key:
+            spread: u
+            splay: -15
+            origin: [-0.5 u, -0.5 u]
+      rows:
+        thumb:
 ```
 
-</TabItem>
-<TabItem value="1" label="1">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![Thumbfan - step 1](./assets/thumbfan_1.png) -->
-
-</div>
-
-**Step 1**: 
-
-</TabItem>
-</Tabs>
+![Thumbfan](./assets/points_thumbfan_demo.svg)
 
 <hr/>
 
@@ -835,24 +855,27 @@ Once we have an existing zone (`matrix`), we can anchor further zones to it &nda
 <details><summary>Choc spacing</summary>
 <p>
 
-arst neio
-
-<Tabs>
-<TabItem value="config" label="Config" default>
+Kailh Choc switches use tighter spacing than Cherry MX. Override the default spread and padding units to use `cx` (18mm) and `cy` (17mm) respectively.
 
 ```yaml
-
+points:
+  key:
+    spread: cx
+    padding: cy
+  zones:
+    matrix:
+      columns:
+        pinky:
+        ring:
+        middle:
+        index:
+      rows:
+        bottom:
+        home:
+        top:
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Choc spacing](./assets/points_choc_demo.svg)
 
 </p>
 </details>
@@ -860,24 +883,29 @@ arst neio
 <details><summary>Row overrides</summary>
 <p>
 
-arst neio
-
-<Tabs>
-<TabItem value="config" label="Config" default>
+Individual rows can override key-level attributes. This is useful for assigning different stagger values per row, or for customizing specific keys.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+          key.stagger: -0.25 u
+        ring:
+          key.stagger: 0.25 u
+        middle:
+          key.stagger: 0.35 u
+        index:
+          key.stagger: -0.15 u
+      rows:
+        bottom:
+        home:
+        top:
+          pinky.skip: true
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Row overrides](./assets/points_row_overrides_demo.svg)
 
 </p>
 </details>
@@ -885,24 +913,37 @@ arst neio
 <details><summary>Column arcs</summary>
 <p>
 
-arst neio
-
-<Tabs>
-<TabItem value="config" label="Config" default>
+Using `splay` together with an `origin` offset on each column creates a curved, arc-like layout where columns fan out from a shared rotation point.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+          key:
+            splay: 5
+            origin: [0, -u]
+        ring:
+          key:
+            stagger: 0.25 u
+            splay: 3
+            origin: [0, -u]
+        middle:
+          key:
+            stagger: 0.35 u
+        index:
+          key:
+            stagger: -0.15 u
+            splay: -3
+            origin: [0, -u]
+      rows:
+        bottom:
+        home:
+        top:
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Column arcs](./assets/points_column_arcs_demo.svg)
 
 </p>
 </details>
@@ -1005,49 +1046,61 @@ This should be generic enough to describe any ergo layout, yet hopefully easy en
 <details><summary>Zone-level adjustment</summary>
 <p>
 
-arst neio
-
-<Tabs>
-<TabItem value="config" label="Config" default>
+Zone-level `rotate` applies an angle to all points within a zone. The rotation origin is always `[0, 0]`. This is useful for tilting one half of a split keyboard.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      rotate: 10
+      columns:
+        pinky:
+          key.stagger: -0.25 u
+        ring:
+          key.stagger: 0.25 u
+        middle:
+          key.stagger: 0.35 u
+        index:
+          key.stagger: -0.15 u
+      rows:
+        bottom:
+        home:
+        top:
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Zone rotation](./assets/points_zone_rotation_demo.svg)
 
 </p>
 </details>
 
-<details><summary>Post-adjustment zones</summary>
+<details><summary>Mirroring</summary>
 <p>
 
-arst neio
-
-<Tabs>
-<TabItem value="config" label="Config" default>
+The `mirror` field creates mirrored copies of all points along a specified axis. Use a number for a simple x-axis coordinate, or an anchor with `distance` for more control. The key-level `mirror` attribute can override specific properties on mirrored points.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+          key.stagger: -0.25 u
+        ring:
+          key.stagger: 0.25 u
+        middle:
+          key.stagger: 0.35 u
+        index:
+          key.stagger: -0.15 u
+      rows:
+        bottom:
+        home:
+        top:
+  mirror:
+    ref: matrix_index_home
+    distance: 2 u
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Mirroring](./assets/points_mirroring_demo.svg)
 
 </p>
 </details>
@@ -1055,25 +1108,43 @@ arst neio
 <details><summary>Asymmetry</summary>
 <p>
 
-arst neio
-- don't forget a key-level mirror example here, too
-
-<Tabs>
-<TabItem value="config" label="Config" default>
+When mirroring, use the `asym` key-level attribute to control which side a key appears on: `source` (original side only), `clone` (mirrored side only), or `both` (default, both sides). The key-level `mirror` attribute can also be used to override specific attributes on mirrored points.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+          key.stagger: -0.25 u
+        ring:
+          key.stagger: 0.25 u
+        middle:
+          key.stagger: 0.35 u
+        index:
+          key.stagger: -0.15 u
+      rows:
+        bottom:
+        home:
+        top:
+    thumb:
+      anchor:
+        ref: matrix_index_bottom
+        shift: [0, -1 u]
+      columns:
+        only:
+          key:
+            asym: source
+            mirror:
+              asym: clone
+      rows:
+        only:
+  mirror:
+    ref: matrix_index_home
+    distance: 2 u
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Asymmetry](./assets/points_asymmetry_demo.svg)
 
 </p>
 </details>

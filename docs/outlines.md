@@ -9,8 +9,6 @@ import TabItem from '@theme/TabItem';
 
 ## Overview
 
-TODO points -> outlines illustration
-
 Once the raw points are available, we often want to turn them into solid, continuous outlines.
 We do this by selecting an arbitrary subset of points and placing shapes there to form a part, and then use boolean operations (i.e., addition, subtraction, or intersection) to combine parts into a final outline to export.
 We'll get back to how an individual part looks soon &ndash; but first, we need to get familiar with binding and filtering.
@@ -65,29 +63,55 @@ And if autobinding fails for a more complex shape, we can always fall back to ex
 <details><summary>Explicit bind</summary>
 <p>
 
-explicit bind and how it's smaller than just placing larger tiles
-
-<Tabs>
-<TabItem value="config" label="Config" default>
+With explicit `bind`, you specify exactly how much each key's rectangle should extend in each direction (top, right, bottom, left), following CSS conventions. This lets shapes reach towards their neighbors without increasing the outside margin. Compare the `raw` outline (no binding, gaps between keys) with the `bound` outline (binding fills the gaps).
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+          rows:
+            bottom.bind: [0, 5, 0, 0]
+            home.bind: [0, 5, 0, 0]
+            top.bind: [0, 5, 0, 0]
+        ring:
+          rows:
+            bottom.bind: [0, 5, 0, 5]
+            home.bind: [0, 5, 0, 5]
+            top.bind: [0, 5, 0, 5]
+        middle:
+          rows:
+            bottom.bind: [0, 0, 0, 5]
+            home.bind: [0, 0, 0, 5]
+            top.bind: [0, 0, 0, 5]
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  raw:
+    - what: rectangle
+      where: true
+      size: [u-1, u-1]
+      bound: false
+  bound:
+    - what: rectangle
+      where: true
+      size: [u-1, u-1]
+      bound: true
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
+**`raw` outline** (no binding &mdash; gaps between keys):
 
-<!-- ![name](./assets/file.png) -->
+![Explicit bind raw](./assets/outlines_explicit_bind_raw.svg)
 
-</div>
-</TabItem>
-</Tabs>
+**`bound` outline** (binding fills the gaps):
+
+![Explicit bind bound](./assets/outlines_explicit_bind_bound.svg)
 
 </p>
 </details>
-
-
 
 
 
@@ -95,29 +119,35 @@ explicit bind and how it's smaller than just placing larger tiles
 <details><summary>Autobind</summary>
 <p>
 
-autobind explanation/illustration
-
-<Tabs>
-<TabItem value="config" label="Config" default>
+When `autobind` is set (default is `10`), Ergogen automatically extends each key's rectangle toward its closest neighbors, up to the specified amount. This eliminates most manual `bind` declarations for standard layouts. Simply set `bound: true` on the shape.
 
 ```yaml
-
+points:
+  key:
+    autobind: 10
+  zones:
+    matrix:
+      columns:
+        pinky:
+        ring:
+        middle:
+        index:
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  board:
+    - what: rectangle
+      where: true
+      size: [u-1, u-1]
+      bound: true
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Autobind board](./assets/outlines_autobind_board.svg)
 
 </p>
 </details>
-
-<br />
 
 
 
@@ -210,48 +240,84 @@ So, for example, writing `[something, other]` would mean that all points are ret
 <details><summary>Tags</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+Tags allow easy subset selection. By assigning tags to keys in the points section, you can filter outlines to include only the tagged keys.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      key:
+        tags:
+          key: true
+      columns:
+        pinky:
+          key.tags.pinky: true
+        ring:
+        middle:
+        index:
+          key.tags.index: true
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  all_keys:
+    - what: rectangle
+      where: key
+      size: 14
+  only_pinky:
+    - what: rectangle
+      where: pinky
+      size: 14
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
+**`all_keys`** (every key tagged with `key`):
 
-<!-- ![name](./assets/file.png) -->
+![Tags all keys](./assets/outlines_tags_all_keys.svg)
 
-</div>
-</TabItem>
-</Tabs>
+**`only_pinky`** (only keys tagged with `pinky`):
+
+![Tags only pinky](./assets/outlines_tags_only_pinky.svg)
 
 </p>
 </details>
 
-
-
-
 <details><summary>Regexes</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+Strings surrounded by `/` are treated as regular expressions. This is useful for matching keys by name patterns without needing tags.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+        ring:
+        middle:
+        index:
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  only_pinky:
+    - what: rectangle
+      where: /pinky/
+      size: 14
+  home_row:
+    - what: rectangle
+      where: /.*_home$/
+      size: 14
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
+**`only_pinky`**:
 
-<!-- ![name](./assets/file.png) -->
+![Regex only pinky](./assets/outlines_regex_only_pinky.svg)
 
-</div>
-</TabItem>
-</Tabs>
+**`home_row`**:
+
+![Regex home row](./assets/outlines_regex_home_row.svg)
 
 </p>
 </details>
@@ -262,22 +328,29 @@ So, for example, writing `[something, other]` would mean that all points are ret
 <details><summary>Negation</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+Prefixing a filter with `-` negates it, selecting everything that does **not** match. This works with both plain strings and regexes.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+        ring:
+        middle:
+        index:
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  everything_except_pinky:
+    - what: rectangle
+      where: -/pinky/
+      size: 14
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Negation](./assets/outlines_negation_everything_except_pinky.svg)
 
 </p>
 </details>
@@ -288,22 +361,33 @@ So, for example, writing `[something, other]` would mean that all points are ret
 <details><summary>Full filters</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+Full-form filters let you check against any key-level attribute. The syntax is `meta.attribute ~ value`, where `~` is the similarity operator. You can check custom attributes defined in the points section.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+          key.side: left
+        ring:
+          key.side: left
+        middle:
+          key.side: right
+        index:
+          key.side: right
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  left_side:
+    - what: rectangle
+      where: "meta.side ~ left"
+      size: 14
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Full filter left side](./assets/outlines_full_filter_left_side.svg)
 
 </p>
 </details>
@@ -314,22 +398,34 @@ So, for example, writing `[something, other]` would mean that all points are ret
 <details><summary>Combination</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+Filters can be combined using arrays. Odd levels of nesting represent OR, even levels represent AND. For example, `[a, b]` matches keys where `a` OR `b` matches, while `[[a, b]]` matches keys where both `a` AND `b` match.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      key.tags.key: true
+      columns:
+        pinky:
+          key.tags.pinky: true
+        ring:
+        middle:
+        index:
+          key.tags.index: true
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  pinky_or_index:
+    - what: rectangle
+      where:
+        - /pinky/
+        - /index/
+      size: 14
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
-
-<!-- ![name](./assets/file.png) -->
-
-</div>
-</TabItem>
-</Tabs>
+![Combination filter](./assets/outlines_combination_pinky_or_index.svg)
 
 </p>
 </details>
@@ -559,22 +655,66 @@ Finally, "private" outlines: if we only want to use an outline as a building blo
 <details><summary>Shapes</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+Ergogen supports several shape primitives: rectangles (with optional corner rounding and beveling), circles, and polygons. These are combined to form complex outlines.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        one:
+        two:
+      rows:
+        bottom:
+        top:
+outlines:
+  rectangles:
+    - what: rectangle
+      where: true
+      size: [14, 14]
+  circles:
+    - what: circle
+      where: true
+      radius: 7
+  rounded_rect:
+    - what: rectangle
+      where: true
+      size: [u-1, u-1]
+      bound: true
+      corner: 3
+  beveled_rect:
+    - what: rectangle
+      where: true
+      size: [u-1, u-1]
+      bound: true
+      bevel: 2
+  filleted:
+    - what: rectangle
+      where: true
+      size: [u-1, u-1]
+      bound: true
+      fillet: 2
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
+**`rectangles`**:
 
-<!-- ![name](./assets/file.png) -->
+![Rectangles](./assets/outlines_shapes_rectangles.svg)
 
-</div>
-</TabItem>
-</Tabs>
+**`circles`**:
+
+![Circles](./assets/outlines_shapes_circles.svg)
+
+**`rounded_rect`**:
+
+![Rounded rect](./assets/outlines_shapes_rounded_rect.svg)
+
+**`beveled_rect`**:
+
+![Beveled rect](./assets/outlines_shapes_beveled_rect.svg)
+
+**`filleted`**:
+
+![Filleted](./assets/outlines_shapes_filleted.svg)
 
 </p>
 </details>
@@ -582,46 +722,113 @@ Finally, "private" outlines: if we only want to use an outline as a building blo
 <details><summary>Boolean operations</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+Parts within an outline are combined using boolean operations: `add` (union), `subtract` (cut out), `intersect` (keep overlap), and `stack` (layer without boolean). The shorthand string syntax `+name`, `-name`, `~name`, `^name` is also available.
 
 ```yaml
-
+points:
+  key:
+    padding: cy
+    bind: 0.1
+  zones:
+    matrix:
+      columns:
+        one:
+        two:
+      rows:
+        bottom:
+        top:
+outlines:
+  _base:
+    - what: rectangle
+      where: true
+      size: cy
+      bound: true
+  _holes:
+    - what: circle
+      where: true
+      radius: 5
+  _fillet:
+    - name: _base
+      fillet: 2
+  _scaled:
+    - name: _fillet
+      scale: 0.5
+  board_with_holes:
+    - "_base"
+    - "-_holes"
+  intersected:
+    - "_base"
+    - "~_scaled"
+  expanded:
+    - name: _base
+      expand: 1
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
+**`board_with_holes`** (base minus circles):
 
-<!-- ![name](./assets/file.png) -->
+![Board with holes](./assets/outlines_boolean_board_with_holes.svg)
 
-</div>
-</TabItem>
-</Tabs>
+**`intersected`** (base intersected with scaled version):
+
+![Intersected](./assets/outlines_boolean_intersected.svg)
+
+**`expanded`** (base expanded by 1mm):
+
+![Expanded](./assets/outlines_boolean_expanded.svg)
 
 </p>
 </details>
 
-
 <details><summary>Asymmetry</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+The `asym` key controls how shapes are placed at mirrored points: `source` places only at original (non-mirrored) points, `clone` places only at mirrored points, and `both` (default) places at all points.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+        ring:
+        middle:
+        index:
+      rows:
+        bottom:
+        home:
+        top:
+  mirror:
+    ref: matrix_index_home
+    distance: 2 u
+outlines:
+  source_only:
+    - what: rectangle
+      where: true
+      size: 14
+      asym: source
+  clone_only:
+    - what: rectangle
+      where: true
+      size: 14
+      asym: clone
+  both_sides:
+    - what: rectangle
+      where: true
+      size: 14
+      asym: both
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
+**`source_only`** (original side only):
 
-<!-- ![name](./assets/file.png) -->
+![Source only](./assets/outlines_asymmetry_source_only.svg)
 
-</div>
-</TabItem>
-</Tabs>
+**`clone_only`** (mirrored side only):
+
+![Clone only](./assets/outlines_asymmetry_clone_only.svg)
+
+**`both_sides`** (both sides):
+
+![Both sides](./assets/outlines_asymmetry_both_sides.svg)
 
 </p>
 </details>
@@ -629,22 +836,41 @@ Finally, "private" outlines: if we only want to use an outline as a building blo
 <details><summary>Adjustments</summary>
 <p>
 
-<Tabs>
-<TabItem value="config" label="Config" default>
+The `adjust` key applies an anchor-like transformation after the shape has been placed at the target point. This is useful for offsetting shapes relative to key positions, for example, to place screw holes between keys.
 
 ```yaml
-
+points:
+  zones:
+    matrix:
+      columns:
+        pinky:
+        ring:
+        middle:
+        index:
+      rows:
+        bottom:
+        home:
+        top:
+outlines:
+  switches:
+    - what: rectangle
+      where: true
+      size: [14, 14]
+  adjusted_circles:
+    - what: circle
+      where: true
+      radius: 3
+      adjust:
+        shift: [0, -7]
 ```
 
-</TabItem>
-<TabItem value="visualization" label="Visualization">
-<div style={{textAlign: 'center'}}>
+**`switches`** (rectangles at key positions):
 
-<!-- ![name](./assets/file.png) -->
+![Switches](./assets/outlines_adjustments_switches.svg)
 
-</div>
-</TabItem>
-</Tabs>
+**`adjusted_circles`** (circles shifted down by 7mm):
+
+![Adjusted circles](./assets/outlines_adjustments_adjusted_circles.svg)
 
 </p>
 </details>
