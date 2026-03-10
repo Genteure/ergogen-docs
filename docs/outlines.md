@@ -281,6 +281,8 @@ outlines:
 
 </p>
 </details>
+
+<details><summary>Regexes</summary>
 <p>
 
 Strings surrounded by `/` are treated as regular expressions. This is useful for matching keys by name patterns without needing tags.
@@ -716,6 +718,8 @@ outlines:
 
 </p>
 </details>
+
+<details><summary>Boolean operations</summary>
 <p>
 
 Parts within an outline are combined using boolean operations: `add` (union), `subtract` (cut out), `intersect` (keep overlap), and `stack` (layer without boolean). The shorthand string syntax `+name`, `-name`, `~name`, `^name` is also available.
@@ -774,6 +778,8 @@ outlines:
 
 </p>
 </details>
+
+<details><summary>Asymmetry</summary>
 <p>
 
 The `asym` key controls how shapes are placed at mirrored points: `source` places only at original (non-mirrored) points, `clone` places only at mirrored points, and `both` (default) places at all points.
@@ -826,6 +832,8 @@ outlines:
 
 </p>
 </details>
+
+<details><summary>Adjustments</summary>
 <p>
 
 The `adjust` key applies an anchor-like transformation after the shape has been placed at the target point. This is useful for offsetting shapes relative to key positions, for example, to place screw holes between keys.
