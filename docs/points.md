@@ -824,7 +824,7 @@ points:
     thumbfan:
       anchor:
         ref: matrix_index_bottom
-        shift: [-0.5 u, -u]
+        shift: [-0.5 u, -1 u]
       columns:
         near:
           key.splay: -15
@@ -1118,7 +1118,7 @@ points:
     thumb:
       anchor:
         ref: matrix_index_bottom
-        shift: [0, -u]
+        shift: [0, -1 u]
       columns:
         only:
           key:
