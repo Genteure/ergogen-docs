@@ -102,6 +102,14 @@ outlines:
       bound: true
 ```
 
+**`raw` outline** (no binding &mdash; gaps between keys):
+
+![Explicit bind raw](./assets/outlines_explicit_bind_raw.svg)
+
+**`bound` outline** (binding fills the gaps):
+
+![Explicit bind bound](./assets/outlines_explicit_bind_bound.svg)
+
 </p>
 </details>
 
@@ -136,10 +144,10 @@ outlines:
       bound: true
 ```
 
+![Autobind board](./assets/outlines_autobind_board.svg)
+
 </p>
 </details>
-
-<br />
 
 
 
@@ -263,13 +271,16 @@ outlines:
       size: 14
 ```
 
+**`all_keys`** (every key tagged with `key`):
+
+![Tags all keys](./assets/outlines_tags_all_keys.svg)
+
+**`only_pinky`** (only keys tagged with `pinky`):
+
+![Tags only pinky](./assets/outlines_tags_only_pinky.svg)
+
 </p>
 </details>
-
-
-
-
-<details><summary>Regexes</summary>
 <p>
 
 Strings surrounded by `/` are treated as regular expressions. This is useful for matching keys by name patterns without needing tags.
@@ -297,6 +308,14 @@ outlines:
       where: /.*_home$/
       size: 14
 ```
+
+**`only_pinky`**:
+
+![Regex only pinky](./assets/outlines_regex_only_pinky.svg)
+
+**`home_row`**:
+
+![Regex home row](./assets/outlines_regex_home_row.svg)
 
 </p>
 </details>
@@ -328,6 +347,8 @@ outlines:
       where: -/pinky/
       size: 14
 ```
+
+![Negation](./assets/outlines_negation_everything_except_pinky.svg)
 
 </p>
 </details>
@@ -364,6 +385,8 @@ outlines:
       size: 14
 ```
 
+![Full filter left side](./assets/outlines_full_filter_left_side.svg)
+
 </p>
 </details>
 
@@ -399,6 +422,8 @@ outlines:
         - /index/
       size: 14
 ```
+
+![Combination filter](./assets/outlines_combination_pinky_or_index.svg)
 
 </p>
 </details>
@@ -669,10 +694,28 @@ outlines:
       fillet: 2
 ```
 
+**`rectangles`**:
+
+![Rectangles](./assets/outlines_shapes_rectangles.svg)
+
+**`circles`**:
+
+![Circles](./assets/outlines_shapes_circles.svg)
+
+**`rounded_rect`**:
+
+![Rounded rect](./assets/outlines_shapes_rounded_rect.svg)
+
+**`beveled_rect`**:
+
+![Beveled rect](./assets/outlines_shapes_beveled_rect.svg)
+
+**`filleted`**:
+
+![Filleted](./assets/outlines_shapes_filleted.svg)
+
 </p>
 </details>
-
-<details><summary>Boolean operations</summary>
 <p>
 
 Parts within an outline are combined using boolean operations: `add` (union), `subtract` (cut out), `intersect` (keep overlap), and `stack` (layer without boolean). The shorthand string syntax `+name`, `-name`, `~name`, `^name` is also available.
@@ -717,11 +760,20 @@ outlines:
       expand: 1
 ```
 
+**`board_with_holes`** (base minus circles):
+
+![Board with holes](./assets/outlines_boolean_board_with_holes.svg)
+
+**`intersected`** (base intersected with scaled version):
+
+![Intersected](./assets/outlines_boolean_intersected.svg)
+
+**`expanded`** (base expanded by 1mm):
+
+![Expanded](./assets/outlines_boolean_expanded.svg)
+
 </p>
 </details>
-
-
-<details><summary>Asymmetry</summary>
 <p>
 
 The `asym` key controls how shapes are placed at mirrored points: `source` places only at original (non-mirrored) points, `clone` places only at mirrored points, and `both` (default) places at all points.
@@ -760,10 +812,20 @@ outlines:
       asym: both
 ```
 
+**`source_only`** (original side only):
+
+![Source only](./assets/outlines_asymmetry_source_only.svg)
+
+**`clone_only`** (mirrored side only):
+
+![Clone only](./assets/outlines_asymmetry_clone_only.svg)
+
+**`both_sides`** (both sides):
+
+![Both sides](./assets/outlines_asymmetry_both_sides.svg)
+
 </p>
 </details>
-
-<details><summary>Adjustments</summary>
 <p>
 
 The `adjust` key applies an anchor-like transformation after the shape has been placed at the target point. This is useful for offsetting shapes relative to key positions, for example, to place screw holes between keys.
@@ -793,6 +855,14 @@ outlines:
       adjust:
         shift: [0, -7]
 ```
+
+**`switches`** (rectangles at key positions):
+
+![Switches](./assets/outlines_adjustments_switches.svg)
+
+**`adjusted_circles`** (circles shifted down by 7mm):
+
+![Adjusted circles](./assets/outlines_adjustments_adjusted_circles.svg)
 
 </p>
 </details>

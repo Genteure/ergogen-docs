@@ -161,6 +161,10 @@ pcbs:
           to: "{{column_net}}"
 ```
 
+Board outline used as edge cut:
+
+![PCB simple board](./assets/pcbs_simple_board.svg)
+
 </p>
 </details>
 
@@ -226,6 +230,10 @@ pcbs:
           P14: R0
           P16: R1
 ```
+
+Board outline used as edge cut:
+
+![PCB MCU board](./assets/pcbs_mcu_board.svg)
 
 </p>
 </details>

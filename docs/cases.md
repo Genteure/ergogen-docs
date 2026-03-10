@@ -78,6 +78,10 @@ cases:
       extrude: 1
 ```
 
+The `board` outline that gets extruded:
+
+![Simple extrusion board](./assets/cases_simple_board.svg)
+
 </p>
 </details>
 
@@ -118,6 +122,14 @@ cases:
       extrude: 1.5
       operation: subtract
 ```
+
+The `board` outline (extruded first):
+
+![Boolean case board](./assets/cases_boolean_board.svg)
+
+The `_switch_cutouts` outline (subtracted from the board):
+
+![Boolean case cutouts](./assets/cases_boolean__switch_cutouts.svg)
 
 </p>
 </details>

@@ -842,6 +842,8 @@ points:
         thumb:
 ```
 
+![Thumbfan](./assets/points_thumbfan_demo.svg)
+
 <hr/>
 
 
@@ -873,6 +875,8 @@ points:
         top:
 ```
 
+![Choc spacing](./assets/points_choc_demo.svg)
+
 </p>
 </details>
 
@@ -900,6 +904,8 @@ points:
         top:
           pinky.skip: true
 ```
+
+![Row overrides](./assets/points_row_overrides_demo.svg)
 
 </p>
 </details>
@@ -936,6 +942,8 @@ points:
         home:
         top:
 ```
+
+![Column arcs](./assets/points_column_arcs_demo.svg)
 
 </p>
 </details>
@@ -1060,6 +1068,8 @@ points:
         top:
 ```
 
+![Zone rotation](./assets/points_zone_rotation_demo.svg)
+
 </p>
 </details>
 
@@ -1089,6 +1099,8 @@ points:
     ref: matrix_index_home
     distance: 2 u
 ```
+
+![Mirroring](./assets/points_mirroring_demo.svg)
 
 </p>
 </details>
@@ -1131,6 +1143,8 @@ points:
     ref: matrix_index_home
     distance: 2 u
 ```
+
+![Asymmetry](./assets/points_asymmetry_demo.svg)
 
 </p>
 </details>
